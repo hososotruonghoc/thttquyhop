@@ -30,7 +30,7 @@ a{text-decoration:none;color:inherit}
 .badge-dot{width:8px;height:8px;border-radius:50%;background:#2557D6;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .hero-pre{font-size:13px;font-weight:700;color:#3B82F6;letter-spacing:3px;text-transform:uppercase;margin-bottom:12px}
-.hero-title{font-size:clamp(36px,5.5vw,60px);font-weight:800;line-height:1.1;color:#1E3A8A;margin-bottom:14px}
+.hero-title{font-size:clamp(36px,5.5vw,60px);font-weight:800;line-height:1.25;color:#1E3A8A;margin-bottom:18px}
 .hero-loc{font-size:14px;color:var(--muted);margin-bottom:22px}.hero-loc i{color:#3B82F6;margin-right:5px}
 .hero-desc{font-size:15px;line-height:1.8;color:var(--muted);max-width:460px;margin-bottom:28px}
 .hero-tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:400px}
@@ -867,6 +867,9 @@ function renderAdmin() {
     h += '<input type="file" id="file-hs" accept=".xlsx,.xls" style="display:none" onchange="handleUploadHS(this)">';
     h += '</div></div>';
 
+    // Sync button
+    h += '<div style="display:flex;gap:10px;margin-bottom:16px"><button onclick="manualSyncToGAS()" style="background:#059669;color:#fff;border:none;padding:10px 24px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--sans)"><i class="fa-solid fa-cloud-arrow-up" style="margin-right:6px"></i>Lưu dữ liệu lên Google Sheet</button><span style="font-size:12px;color:#888;display:flex;align-items:center" id="sync-status"></span></div>';
+
     // Current data summary
     h += '<div class="card" style="padding:20px;margin-bottom:20px">';
     h += '<h3 style="font-size:14px;font-weight:700;margin-bottom:14px"><i class="fa-solid fa-database" style="color:#2557D6;margin-right:6px"></i>Dữ liệu hiện tại</h3>';
@@ -1089,12 +1092,17 @@ function handleUploadHS(input) {
       var json = XLSX.utils.sheet_to_json(ws, {header: 1});
       if (json.length < 2) { showUploadResult("error", "File rỗng hoặc không có dữ liệu!"); return; }
 
-      // Find header row
-      var hdrIdx = 0;
-      for (var i = 0; i < Math.min(5, json.length); i++) {
-        var row = json[i].map(function(c) { return String(c || "").toLowerCase(); });
-        if (row.some(function(c) { return c.indexOf("họ") >= 0 || c.indexOf("ten") >= 0 || c.indexOf("lớp") >= 0 || c.indexOf("lop") >= 0; })) { hdrIdx = i; break; }
+      // Find header row (the row that contains column names like "Họ và tên", "Lớp")
+      var hdrIdx = -1;
+      for (var i = 0; i < Math.min(8, json.length); i++) {
+        var row = (json[i]||[]).map(function(c) { return String(c || "").toLowerCase().trim(); });
+        // Must have at least 3 non-empty cells AND contain both "họ" and "lớp" keywords
+        var nonEmpty = row.filter(function(c) { return c.length > 0; }).length;
+        var hasHoTen = row.some(function(c) { return c.indexOf("họ") >= 0 && c.indexOf("tên") >= 0; });
+        var hasLop = row.some(function(c) { return c === "lớp" || c === "lop"; });
+        if (nonEmpty >= 3 && (hasHoTen || hasLop)) { hdrIdx = i; break; }
       }
+      if (hdrIdx === -1) hdrIdx = 0; // fallback
 
       var headers = json[hdrIdx].map(function(c) { return String(c || "").trim(); });
       var colMap = findColumns(headers);
@@ -1103,8 +1111,13 @@ function handleUploadHS(input) {
       for (var i = hdrIdx + 1; i < json.length; i++) {
         var r = json[i];
         if (!r || !r[colMap.hoTen]) continue;
+        var hoTen = String(r[colMap.hoTen] || "").trim();
         var lop = String(r[colMap.lop] || "").trim();
-        if (!lop) continue;
+        if (!lop || !hoTen) continue;
+        // Skip rows that look like headers (contain "họ", "tên", "lớp" as values)
+        var htLower = hoTen.toLowerCase();
+        if (htLower === "họ và tên" || htLower === "ho ten" || htLower === "họ tên" || htLower.indexOf("stt") >= 0) continue;
+        if (lop.toLowerCase() === "lớp" || lop.toLowerCase() === "lop") continue;
         newStudents.push({
           stt: newStudents.length + 1,
           lop: lop,
@@ -1130,14 +1143,8 @@ function handleUploadHS(input) {
       reloadAppData();
 
       cacheCurrentData();
-      showUploadResult("success", "Đã tải lên <b>" + newStudents.length + " HS</b> từ <b>" + ALL_CLASSES.length + " lớp</b>!");
-      // Đồng bộ lên GAS
-      if (GAS_URL) {
-        fetch(GAS_URL, {method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({type:"students",rows:newStudents})})
-          .then(function(r){return r.json()})
-          .then(function(d){showUploadResult("success","Đã đồng bộ "+newStudents.length+" HS lên Google Sheet!")})
-          .catch(function(e){console.log("GAS sync error:",e)});
-      }
+      // Auto sync to GAS
+      syncStudentsToGAS(newStudents);
       setTimeout(function() { renderAdmin(); }, 800);
     } catch (err) {
       showUploadResult("error", "Lỗi đọc file: " + err.message);
@@ -1727,6 +1734,37 @@ function cacheCurrentData() {
     };
     sessionStorage.setItem("qh_cache", JSON.stringify(data));
   } catch(e) {}
+}
+
+
+function syncStudentsToGAS(students) {
+  if (!GAS_URL) { 
+    showUploadResult("success", "Đã tải "+students.length+" HS (chưa kết nối GAS)"); 
+    return; 
+  }
+  showUploadResult("success", "Đang đồng bộ "+students.length+" HS lên Google Sheet...");
+  fetch(GAS_URL, {
+    method: "POST",
+    headers: {"Content-Type": "text/plain"},
+    body: JSON.stringify({type: "students", rows: students})
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (d.success) {
+      showUploadResult("success", "✅ Đã lưu " + students.length + " HS lên Google Sheet!");
+    } else {
+      showUploadResult("error", "Lỗi GAS: " + (d.error || d.message || "Không rõ"));
+    }
+  })
+  .catch(function(e) {
+    showUploadResult("error", "Lỗi kết nối GAS: " + e.message + ". Dữ liệu đã lưu trên trình duyệt.");
+  });
+}
+
+function manualSyncToGAS() {
+  if (!GAS_URL) { showUploadResult("error","Chưa có URL GAS!"); return; }
+  if (STUDENTS_DATA.length === 0) { showUploadResult("error","Chưa có dữ liệu HS!"); return; }
+  syncStudentsToGAS(STUDENTS_DATA);
 }
 
 function applyGASData(data) {
