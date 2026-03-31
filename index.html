@@ -330,8 +330,8 @@ function requireClassLogin(grade, cls) {
     if (inp) inp.focus();
     function tryLogin() {
       var pw = (inp || {}).value || "";
-      var correctPW = localStorage.getItem("qh_cpw_" + classKey) || (classKey + "gvcn");
-      if (pw === correctPW || pw === (localStorage.getItem("qh_pw_admin") || "admin2025")) {
+      var correctPW = CLASS_PW[classKey] || (classKey + "gvcn");
+      if (pw === correctPW || pw === ADMIN_PW) {
         classUnlocked[classKey] = true;
         closeLogin();
         cnState.view = "class"; cnState.selG = grade; cnState.selC = cls; cnState.tab = "overview";
@@ -384,8 +384,8 @@ function showLoginModal(targetPage) {
 
 function doLogin(targetPage) {
   var pw = (document.getElementById("login-pw") || {}).value || "";
-  var adminPW = localStorage.getItem("qh_pw_admin") || "admin2025";
-  var teacherPW = localStorage.getItem("qh_pw_teacher") || "gvcn2025";
+  var adminPW = ADMIN_PW || "admin2025";
+  // Teacher PW removed - only admin login
   
   if (pw === adminPW) {
     loggedIn = "admin";
@@ -417,9 +417,16 @@ function closeLogin() {
 
 function savePW(type) {
   var el = document.getElementById("pw-" + type);
-  if (!el || !el.value.trim()) { showUploadResult("error", "Mật khẩu không được để trống!"); return; }
-  localStorage.setItem("qh_pw_" + type, el.value.trim());
-  showUploadResult("success", "Đã lưu mật khẩu " + (type === "admin" ? "Quản trị" : "Giáo viên") + "!");
+  if (!el || !el.value.trim()) { showUploadResult("error","Mật khẩu không được để trống!"); return; }
+  ADMIN_PW = el.value.trim();
+  if (GAS_URL) {
+    fetch(GAS_URL, {method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({type:"save_password",password:ADMIN_PW})})
+      .then(function(r){return r.json()})
+      .then(function(d){showUploadResult("success","Đã lưu mật khẩu lên Google Sheet!")})
+      .catch(function(e){showUploadResult("error","Lỗi: "+e.message)});
+  } else {
+    showUploadResult("success","Đã cập nhật mật khẩu (chỉ phiên này)!");
+  }
 }
 
 // ===== PAGE SWITCHING =====
@@ -903,7 +910,7 @@ function renderAdmin() {
       var cls = allClasses.filter(function(c) { return c[0] === String(g); });
       cls.forEach(function(c) {
         var cv = TCH[c] || "";
-        var cpw = localStorage.getItem("qh_cpw_" + c) || (c + "gvcn");
+        var cpw = CLASS_PW[c] || (c + "gvcn");
         h += '<div style="margin-bottom:10px;padding:8px;background:#f8fafc;border-radius:8px"><label style="font-size:11px;color:#1E3A8A;font-weight:700;display:block;margin-bottom:4px">Lớp ' + c + '</label>';
         h += '<input id="gv-' + c + '" value="' + esc(cv) + '" placeholder="Tên GVCN..." style="width:100%;border:1px solid #E2E8F0;border-radius:8px;padding:7px 10px;font-size:12px;font-family:var(--sans);outline:none;margin-bottom:4px">';
         h += '<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:#888;white-space:nowrap">🔑</span><div style="position:relative;flex:1"><input id="cpw-' + c + '" type="password" value="' + esc(cpw) + '" style="width:100%;border:1px solid #e2e8f0;border-radius:6px;padding:5px 28px 5px 8px;font-size:11px;font-family:var(--sans);outline:none"><span onclick="togglePwVis(this)" style="position:absolute;right:6px;top:5px;cursor:pointer;color:#aaa;font-size:12px"><i class="fa-solid fa-eye"></i></span></div></div></div>';
@@ -988,7 +995,7 @@ function renderAdmin() {
     h += '<div style="max-width:400px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:20px;margin-bottom:16px">';
     h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><div style="width:40px;height:40px;border-radius:10px;background:#1E3A8A;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px"><i class="fa-solid fa-user-shield"></i></div><div><div style="font-size:14px;font-weight:700">Quản trị viên</div><div style="font-size:11px;color:#888">Truy cập đầy đủ hệ thống</div></div></div>';
     h += '<label style="font-size:11px;font-weight:600;color:#1E3A8A;display:block;margin-bottom:4px">Mật khẩu quản trị</label>';
-    h += '<div style="position:relative"><input id="pw-admin" type="password" value="'+(localStorage.getItem("qh_pw_admin")||"admin2025")+'" style="width:100%;border:1px solid #BFDBFE;border-radius:8px;padding:10px 40px 10px 10px;font-size:13px;font-family:var(--sans);outline:none;margin-bottom:10px"><span onclick="togglePwVis(this)" style="position:absolute;right:10px;top:10px;cursor:pointer;color:#888;font-size:14px"><i class="fa-solid fa-eye"></i></span></div>';
+    h += '<div style="position:relative"><input id="pw-admin" type="password" value="'+ADMIN_PW+'" style="width:100%;border:1px solid #BFDBFE;border-radius:8px;padding:10px 40px 10px 10px;font-size:13px;font-family:var(--sans);outline:none;margin-bottom:10px"><span onclick="togglePwVis(this)" style="position:absolute;right:10px;top:10px;cursor:pointer;color:#888;font-size:14px"><i class="fa-solid fa-eye"></i></span></div>';
     h += '<button onclick="savePW(\'admin\')" style="background:#1E3A8A;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans);width:100%"><i class="fa-solid fa-save" style="margin-right:4px"></i>Lưu mật khẩu</button>';
     h += '</div>';
 
@@ -1120,7 +1127,14 @@ function handleUploadHS(input) {
       newStudents.forEach(function(s) { STUDENTS_DATA.push(s); });
       reloadAppData();
 
-      showUploadResult("success", "Đã tải lên thành công <b>" + newStudents.length + " học sinh</b> từ <b>" + ALL_CLASSES.length + " lớp</b>!");
+      showUploadResult("success", "Đã tải lên <b>" + newStudents.length + " HS</b> từ <b>" + ALL_CLASSES.length + " lớp</b>!");
+      // Đồng bộ lên GAS
+      if (GAS_URL) {
+        fetch(GAS_URL, {method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({type:"students",rows:newStudents})})
+          .then(function(r){return r.json()})
+          .then(function(d){showUploadResult("success","Đã đồng bộ "+newStudents.length+" HS lên Google Sheet!")})
+          .catch(function(e){console.log("GAS sync error:",e)});
+      }
       setTimeout(function() { renderAdmin(); }, 800);
     } catch (err) {
       showUploadResult("error", "Lỗi đọc file: " + err.message);
@@ -1162,21 +1176,26 @@ function handleUploadGV(input) {
 
 function saveTeachersFromForm() {
   var classes = ["1A","1B","1C","1D","1E","2A","2B","2C","2D","2E","3A","3B","3C","3D","3E","4A","4B","4C","4D","4E","5A","5B","5C","5D","5E"];
-  var count = 0;
+  var rows = [];
   classes.forEach(function(c) {
     var el = document.getElementById("gv-" + c);
     var pwEl = document.getElementById("cpw-" + c);
-    if (el) {
-      var name = el.value.trim();
-      if (name) { TEACHERS_DATA[c] = name; count++; }
-      else { delete TEACHERS_DATA[c]; }
-    }
-    if (pwEl && pwEl.value.trim()) {
-      localStorage.setItem("qh_cpw_" + c, pwEl.value.trim());
-    }
+    var name = el ? el.value.trim() : "";
+    var pw = pwEl ? pwEl.value.trim() : (c + "gvcn");
+    if (name) { TEACHERS_DATA[c] = name; }
+    else { delete TEACHERS_DATA[c]; }
+    CLASS_PW[c] = pw;
+    rows.push({lop:c, gvcn:name, pw:pw});
   });
   reloadAppData();
-  showUploadResult("success", "Đã lưu <b>" + count + " GVCN</b> và mật khẩu!");
+  if (GAS_URL) {
+    fetch(GAS_URL, {method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({type:"teachers",rows:rows})})
+      .then(function(r){return r.json()})
+      .then(function(d){showUploadResult("success","Đã lưu GVCN + mật khẩu lên Google Sheet!")})
+      .catch(function(e){showUploadResult("error","Lỗi: "+e.message)});
+  } else {
+    showUploadResult("success","Đã lưu GVCN!");
+  }
   setTimeout(function() { renderAdmin(); }, 600);
 }
 
@@ -1358,14 +1377,26 @@ function saveCBGVTable() {
   var data = [];
   rows.forEach(function(tr) {
     var name = tr.querySelector(".cbgv-name");
+    var dob = tr.querySelector(".cbgv-dob");
+    var role = tr.querySelector(".cbgv-role");
+    var task = tr.querySelector(".cbgv-task");
     var cls = tr.querySelector(".cbgv-class");
+    var phone = tr.querySelector(".cbgv-phone");
+    var note = tr.querySelector(".cbgv-note");
     if (name && name.value.trim()) {
-      data.push({name:name.value.trim(), cls:(cls?cls.value.trim():"")});
+      data.push({hoTen:name.value.trim(), ngaySinh:dob?dob.value:"", chucVu:role?role.value:"", nhiemVu:task?task.value:"", gvcnLop:cls?cls.value.trim():"", sdt:phone?phone.value:"", ghiChu:note?note.value:""});
       if (cls && cls.value.trim()) TEACHERS_DATA[cls.value.trim()] = name.value.trim();
     }
   });
   reloadAppData();
-  showUploadResult("success","Đã lưu danh sách "+data.length+" CBGV!");
+  if (GAS_URL) {
+    fetch(GAS_URL, {method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({type:"cbgvnv",rows:data})})
+      .then(function(r){return r.json()})
+      .then(function(d){showUploadResult("success","Đã lưu "+data.length+" CBGV lên Google Sheet!")})
+      .catch(function(e){showUploadResult("error","Lỗi: "+e.message)});
+  } else {
+    showUploadResult("success","Đã lưu "+data.length+" CBGV!");
+  }
 }
 
 
@@ -1383,10 +1414,18 @@ function togglePwVis(el) {
 }
 
 function changeClassPW(classKey) {
-  var newPW = prompt("Đổi mật khẩu lớp " + classKey + "\nMật khẩu hiện tại: " + (localStorage.getItem("qh_cpw_" + classKey) || classKey + "gvcn") + "\n\nNhập mật khẩu mới:");
+  var curPW = CLASS_PW[classKey] || (classKey + "gvcn");
+  var newPW = prompt("Đổi mật khẩu lớp " + classKey + "\nMật khẩu hiện tại: " + curPW + "\n\nNhập mật khẩu mới:");
   if (newPW && newPW.trim()) {
-    localStorage.setItem("qh_cpw_" + classKey, newPW.trim());
-    showUploadResult("success", "Đã đổi mật khẩu lớp " + classKey + "!");
+    CLASS_PW[classKey] = newPW.trim();
+    if (GAS_URL) {
+      fetch(GAS_URL, {method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({type:"save_class_pw","class":classKey,password:newPW.trim()})})
+        .then(function(r){return r.json()})
+        .then(function(d){showUploadResult("success","Đã lưu MK lớp "+classKey+" lên Google Sheet!")})
+        .catch(function(e){showUploadResult("error","Lỗi: "+e.message)});
+    } else {
+      showUploadResult("success","Đã đổi MK lớp "+classKey+"!");
+    }
   }
 }
 
@@ -1479,9 +1518,11 @@ function saveSchoolConfig() {
 }
 function saveConfigToGAS() {
   if (!GAS_URL) { showUploadResult("error","Chưa có URL GAS!"); return; }
+  var principal = (document.getElementById("cfg-principal")||{}).value || "";
+  var phone = (document.getElementById("cfg-phone")||{}).value || "";
+  var email = (document.getElementById("cfg-email")||{}).value || "";
   showUploadResult("success","Đang đồng bộ...");
-  // POST config to GAS
-  fetch(GAS_URL, {method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({type:"config",school:SCHOOL,addr:ADDR,year:YEAR})})
+  fetch(GAS_URL, {method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({type:"config",school:SCHOOL,addr:ADDR,year:YEAR,principal:principal,phone:phone,email:email,adminPW:ADMIN_PW})})
     .then(function(r){return r.json()})
     .then(function(d){showUploadResult("success","Đã đồng bộ cấu hình lên Google Sheet!")})
     .catch(function(e){showUploadResult("error","Lỗi: "+e.message)});
@@ -1661,20 +1702,42 @@ function animateCounter(el) {
 </script>
 
 <script>
-// Auto-load data from GAS on page load
+// Auto-load ALL data from GAS on page load
+var CLASS_PW = {};
+var ADMIN_PW = "admin2025";
+var GAS_CBGVNV = [];
+var GAS_CN_DATA = {};
+
 (function(){
   if(typeof GAS_URL!=="undefined" && GAS_URL){
     fetch(GAS_URL+"?action=getData")
       .then(function(r){return r.json()})
       .then(function(data){
-        if(data.success && data.students && data.students.length>0){
+        if(!data.success) return;
+        // Học sinh
+        if(data.students && data.students.length>0){
           STUDENTS_DATA.length=0;
           data.students.forEach(function(s){STUDENTS_DATA.push(s)});
-          Object.keys(data.teachers||{}).forEach(function(k){TEACHERS_DATA[k]=data.teachers[k]});
-          reloadAppData();
-          updateHomeStats();
-          console.log("✅ Đã tải "+data.totalStudents+" HS từ Google Sheet");
         }
+        // GVCN
+        Object.keys(data.teachers||{}).forEach(function(k){TEACHERS_DATA[k]=data.teachers[k]});
+        // Mật khẩu lớp (từ GAS, không dùng localStorage)
+        if(data.classPW) CLASS_PW = data.classPW;
+        // Mật khẩu admin
+        if(data.config && data.config["Mật khẩu Admin"]) ADMIN_PW = data.config["Mật khẩu Admin"];
+        // Cấu hình trường
+        if(data.config){
+          if(data.config["Tên trường"]) SCHOOL = data.config["Tên trường"];
+          if(data.config["Địa chỉ"]) ADDR = data.config["Địa chỉ"];
+          if(data.config["Năm học"]) YEAR = data.config["Năm học"];
+        }
+        // CBGVNV
+        if(data.cbgvnv) GAS_CBGVNV = data.cbgvnv;
+        // Sổ chủ nhiệm
+        if(data.soChuNhiem) GAS_CN_DATA = data.soChuNhiem;
+        reloadAppData();
+        updateHomeStats();
+        console.log("✅ Đã tải "+data.totalStudents+" HS, "+(data.totalClasses||0)+" lớp, "+(GAS_CBGVNV.length||0)+" CBGV từ Google Sheet");
       })
       .catch(function(e){console.log("GAS load skipped:",e.message)});
   }
