@@ -1092,32 +1092,42 @@ function handleUploadHS(input) {
       var json = XLSX.utils.sheet_to_json(ws, {header: 1});
       if (json.length < 2) { showUploadResult("error", "File rỗng hoặc không có dữ liệu!"); return; }
 
-      // Find header row (the row that contains column names like "Họ và tên", "Lớp")
-      var hdrIdx = -1;
-      for (var i = 0; i < Math.min(8, json.length); i++) {
-        var row = (json[i]||[]).map(function(c) { return String(c || "").toLowerCase().trim(); });
-        // Must have at least 3 non-empty cells AND contain both "họ" and "lớp" keywords
-        var nonEmpty = row.filter(function(c) { return c.length > 0; }).length;
-        var hasHoTen = row.some(function(c) { return c.indexOf("họ") >= 0 && c.indexOf("tên") >= 0; });
-        var hasLop = row.some(function(c) { return c === "lớp" || c === "lop"; });
-        if (nonEmpty >= 3 && (hasHoTen || hasLop)) { hdrIdx = i; break; }
+      // Find header row - scan first 10 rows for the one with most column-like cells
+      var hdrIdx = 0;
+      var bestScore = 0;
+      for (var i = 0; i < Math.min(10, json.length); i++) {
+        var row = json[i] || [];
+        var rowStr = row.map(function(c) { return String(c || "").toLowerCase(); }).join("|");
+        var score = 0;
+        if (rowStr.indexOf("stt") >= 0) score += 2;
+        if (rowStr.indexOf("lớp") >= 0 || rowStr.indexOf("lop") >= 0) score += 3;
+        if (rowStr.indexOf("họ") >= 0) score += 3;
+        if (rowStr.indexOf("tên") >= 0) score += 2;
+        if (rowStr.indexOf("sinh") >= 0) score += 2;
+        if (rowStr.indexOf("giới") >= 0 || rowStr.indexOf("gioi") >= 0) score += 1;
+        if (rowStr.indexOf("dân tộc") >= 0) score += 1;
+        // Penalize if row has very few cells (title rows)
+        var nonEmpty = row.filter(function(c) { return String(c||"").trim().length > 0; }).length;
+        if (nonEmpty < 3) score = 0;
+        if (score > bestScore) { bestScore = score; hdrIdx = i; }
       }
-      if (hdrIdx === -1) hdrIdx = 0; // fallback
 
-      var headers = json[hdrIdx].map(function(c) { return String(c || "").trim(); });
+      var headers = (json[hdrIdx]||[]).map(function(c) { return String(c || "").trim(); });
       var colMap = findColumns(headers);
 
       var newStudents = [];
       for (var i = hdrIdx + 1; i < json.length; i++) {
         var r = json[i];
-        if (!r || !r[colMap.hoTen]) continue;
+        if (!r || r.length < 2) continue;
         var hoTen = String(r[colMap.hoTen] || "").trim();
         var lop = String(r[colMap.lop] || "").trim();
-        if (!lop || !hoTen) continue;
-        // Skip rows that look like headers (contain "họ", "tên", "lớp" as values)
-        var htLower = hoTen.toLowerCase();
-        if (htLower === "họ và tên" || htLower === "ho ten" || htLower === "họ tên" || htLower.indexOf("stt") >= 0) continue;
-        if (lop.toLowerCase() === "lớp" || lop.toLowerCase() === "lop") continue;
+        if (!hoTen || hoTen.length < 2) continue;
+        if (!lop) continue;
+        // Skip header-like rows
+        var htL = hoTen.toLowerCase();
+        if (htL === "họ và tên" || htL === "ho va ten" || htL === "họ tên") continue;
+        var lopL = lop.toLowerCase();
+        if (lopL === "lớp" || lopL === "lop") continue;
         newStudents.push({
           stt: newStudents.length + 1,
           lop: lop,
