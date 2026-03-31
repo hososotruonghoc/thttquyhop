@@ -223,6 +223,9 @@ footer{padding:30px;background:var(--ink);color:rgba(255,255,255,.4);text-align:
 </div>
 </section>
 
+
+
+
 <!-- FEATURES -->
 <section style="background:var(--bg);padding:80px 32px">
 <div style="max-width:1100px;margin:0 auto">
@@ -271,7 +274,7 @@ footer{padding:30px;background:var(--ink);color:rgba(255,255,255,.4);text-align:
   </div>
 </div>
 <div style="max-width:1100px;margin:0 auto;padding-top:16px;display:flex;justify-content:space-between;font-size:11px">
-  <span>© 2026 QH Digital School — Trường TH Xã Quỳ Hợp</span>
+  <span>© 2026 QH Digital School — Trường TH Xã Quỳ Hợp · Thiết kế: Chung Trần — Zalo 0913 031 073</span>
   <span style="color:#60A5FA">v5.0</span>
 </div>
 </footer>
@@ -298,7 +301,7 @@ var SCHOOL="Trường TH Xã Quỳ Hợp",ADDR="Xã Quỳ Hợp, tỉnh Nghệ A
 var GAS_URL="https://script.google.com/macros/s/AKfycbyGhS4T9qdhwbzWXhA43lzQkZykb6tSqqEmWxuShJDjtTH3tMAq57wxH0ctlkLbfLLbMw/exec";
 var GC={1:{bg:"#1E3A8A",lt:"#DBEAFE",ac:"#3B82F6",gr:"linear-gradient(135deg,#1E3A8A,#2557D6)"},2:{bg:"#1D4ED8",lt:"#E0EDFF",ac:"#60A5FA",gr:"linear-gradient(135deg,#1D4ED8,#3B82F6)"},3:{bg:"#2557D6",lt:"#EFF6FF",ac:"#93C5FD",gr:"linear-gradient(135deg,#2557D6,#60A5FA)"},4:{bg:"#1E40AF",lt:"#DBEAFE",ac:"#3B82F6",gr:"linear-gradient(135deg,#1E40AF,#2563EB)"},5:{bg:"#1A3590",lt:"#E0EDFF",ac:"#60A5FA",gr:"linear-gradient(135deg,#1A3590,#2557D6)"}};
 var GI={1:"🌱",2:"🌻",3:"🌟",4:"🚀",5:"🏆"};
-var HOSO_COLORS=["linear-gradient(135deg,#1E3A8A,#2557D6)","linear-gradient(135deg,#1E40AF,#2563EB)","linear-gradient(135deg,#1D4ED8,#3B82F6)","linear-gradient(135deg,#1E3A8A,#1D4ED8)","linear-gradient(135deg,#2557D6,#3B82F6)","linear-gradient(135deg,#1E40AF,#3B82F6)","linear-gradient(135deg,#1A3590,#2557D6)","linear-gradient(135deg,#162E80,#1E40AF)","linear-gradient(135deg,#132870,#1A3590)","linear-gradient(135deg,#0F2260,#162E80)"];
+var HOSO_COLORS=["linear-gradient(135deg,#1E3A8A,#1E40AF)","linear-gradient(135deg,#1E40AF,#2557D6)","linear-gradient(135deg,#2557D6,#3B82F6)","linear-gradient(135deg,#1D4ED8,#2563EB)","linear-gradient(135deg,#1E3A8A,#2557D6)","linear-gradient(135deg,#1E40AF,#3B82F6)","linear-gradient(135deg,#2557D6,#60A5FA)","linear-gradient(135deg,#1D4ED8,#60A5FA)","linear-gradient(135deg,#0F2260,#1E3A8A)","linear-gradient(135deg,#0C1C50,#162E80)"];
 var HOSO_ICONS=["fa-user-tie","fa-user-gear","fa-users-rectangle","fa-file-lines","fa-calculator","fa-flag","fa-children","fa-people-roof","fa-clipboard-check","fa-shield-halved"];
 var ALL={},TCH={};
 STUDENTS_DATA.forEach(function(s){if(!ALL[s.lop])ALL[s.lop]=[];ALL[s.lop].push(s)});
@@ -330,7 +333,7 @@ function requireClassLogin(grade, cls) {
   html += '<div style="font-size:18px;font-weight:800;color:#1E293B">Đăng nhập Lớp ' + classKey + '</div>';
   html += '<div style="font-size:13px;color:#888;margin-top:4px">Nhập mật khẩu GVCN để quản lý sổ chủ nhiệm</div></div>';
   html += '<div style="margin-bottom:16px"><label style="font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:6px">Mật khẩu lớp ' + classKey + '</label>';
-  html += '<input id="login-class-pw" type="password" placeholder="Nhập mật khẩu..." style="width:100%;border:2px solid #E2E8F0;border-radius:10px;padding:12px 14px;font-size:14px;font-family:var(--sans);outline:none"></div>';
+  html += '<div style="position:relative"><input id="login-class-pw" type="password" placeholder="Nhập mật khẩu..." style="width:100%;border:2px solid #E2E8F0;border-radius:10px;padding:12px 40px 12px 14px;font-size:14px;font-family:var(--sans);outline:none"><span onclick="togglePwVis(this)" style="position:absolute;right:12px;top:12px;cursor:pointer;color:#aaa;font-size:16px"><i class="fa-solid fa-eye"></i></span></div></div>';
   html += '<div id="login-class-err" style="font-size:12px;color:#DC2626;margin-bottom:10px;display:none"></div>';
   html += '<button id="btn-class-login" style="width:100%;background:#2557D6;color:#fff;border:none;padding:13px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--sans);margin-bottom:10px">Đăng nhập</button>';
   html += '<button onclick="closeLogin()" style="width:100%;background:#F1F5F9;color:#475569;border:none;padding:10px;border-radius:10px;font-size:13px;cursor:pointer;font-family:var(--sans)">Hủy</button>';
@@ -343,7 +346,7 @@ function requireClassLogin(grade, cls) {
     if (inp) inp.focus();
     function tryLogin() {
       var pw = (inp || {}).value || "";
-      var correctPW = classKey + "gvcn";
+      var correctPW = localStorage.getItem("qh_cpw_" + classKey) || (classKey + "gvcn");
       if (pw === correctPW || pw === (localStorage.getItem("qh_pw_admin") || "admin2025")) {
         classUnlocked[classKey] = true;
         closeLogin();
@@ -379,7 +382,7 @@ function showLoginModal(targetPage) {
   html += '<div style="font-size:18px;font-weight:800;color:#1E293B">Đăng nhập</div>';
   html += '<div style="font-size:13px;color:#888;margin-top:4px">' + title + '</div></div>';
   html += '<div style="margin-bottom:16px"><label style="font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:6px">Mật khẩu</label>';
-  html += '<input id="login-pw" type="password" placeholder="Nhập mật khẩu..." style="width:100%;border:2px solid #E2E8F0;border-radius:10px;padding:12px 14px;font-size:14px;font-family:var(--sans);outline:none;transition:border .2s"></div>';
+  html += '<div style="position:relative"><input id="login-pw" type="password" placeholder="Nhập mật khẩu..." style="width:100%;border:2px solid #E2E8F0;border-radius:10px;padding:12px 40px 12px 14px;font-size:14px;font-family:var(--sans);outline:none;transition:border .2s"><span onclick="togglePwVis(this)" style="position:absolute;right:12px;top:12px;cursor:pointer;color:#aaa;font-size:16px"><i class="fa-solid fa-eye"></i></span></div></div>';
   html += '<div id="login-err" style="font-size:12px;color:#DC2626;margin-bottom:10px;display:none"></div>';
   html += '<button onclick="doLogin(' + "'" + targetPage + "'" + ')" style="width:100%;background:#2557D6;color:#fff;border:none;padding:13px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--sans);margin-bottom:10px">Đăng nhập</button>';
   html += '<button onclick="closeLogin()" style="width:100%;background:#F1F5F9;color:#475569;border:none;padding:10px;border-radius:10px;font-size:13px;cursor:pointer;font-family:var(--sans)">Hủy</button>';
@@ -497,7 +500,7 @@ function renderCN(){
     var nam=students.filter(function(s){return s.gioiTinh==="Nam"}).length;
     h+='<div class="page-flex"><div class="sidebar">';
     h+='<button class="sidebar-btn" data-cnav="grade" data-g="'+selG+'" style="background:#f5f7fa;color:#666;margin-bottom:14px">← Khối '+selG+'</button>';
-    h+='<div class="sidebar-info" style="background:'+gc.lt+';border:1px solid '+gc.bg+'15"><div style="width:48px;height:48px;border-radius:12px;background:'+gc.gr+';display:flex;align-items:center;justify-content:center;margin:0 auto 8px;color:#fff;font-size:18px;font-weight:800">'+selG+selC+'</div><div style="font-size:14px;font-weight:700;color:'+gc.bg+'">Lớp '+selG+selC+'</div><div style="font-size:11px;color:#888;margin-top:3px">'+esc(teacher)+'</div><div style="font-size:11px;color:'+gc.ac+';font-weight:600;margin-top:3px">'+students.length+' học sinh</div></div>';
+    h+='<div class="sidebar-info" style="background:'+gc.lt+';border:1px solid '+gc.bg+'15"><div style="width:48px;height:48px;border-radius:12px;background:'+gc.gr+';display:flex;align-items:center;justify-content:center;margin:0 auto 8px;color:#fff;font-size:18px;font-weight:800">'+selG+selC+'</div><div style="font-size:14px;font-weight:700;color:'+gc.bg+'">Lớp '+selG+selC+'</div><div style="font-size:11px;color:#888;margin-top:3px">'+esc(teacher)+'</div><div style="font-size:11px;color:'+gc.ac+';font-weight:600;margin-top:3px">'+students.length+' học sinh</div><button onclick="changeClassPW(\''+selG+selC+'\')" style="margin-top:8px;background:none;border:1px solid '+gc.bg+'30;color:'+gc.ac+';padding:4px 10px;border-radius:6px;font-size:10px;cursor:pointer;font-family:var(--sans)"><i class="fa-solid fa-key"></i> Đổi MK</button></div>';
     var tabs=[["overview","📋 Tổng quan"],["students","📝 Danh sách HS"],["groups","👥 Nhóm HS"],["seating","🪑 Sơ đồ lớp"],["special","⭐ HS đặc biệt"],["stats","📊 Thống kê"],["plan","📅 Kế hoạch CN"],["parents","👨‍👩‍👧 Họp phụ huynh"],["tracking","📌 Theo dõi"]];
     tabs.forEach(function(t){
       h+='<button class="sidebar-btn" data-cnav="tab" data-tab="'+t[0]+'" style="'+(tab===t[0]?"background:"+gc.lt+";color:"+gc.bg+";border:1px solid "+gc.bg+"20;font-weight:600":"")+'">'+t[1]+'</button>';
@@ -601,7 +604,7 @@ function renderCN(){
 
     // Tab: Special
     if(tab==="special"){
-      h+='<h2 style="font-size:20px;font-weight:700;margin-bottom:16px">⭐ HS đặc biệt & Ban cán sự</h2>';
+      h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><h2 style="font-size:20px;font-weight:700;margin:0">⭐ HS đặc biệt & Ban cán sự</h2><button onclick="saveCNToGAS()" style="background:#059669;color:#fff;border:none;padding:8px 18px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans)"><i class="fa-solid fa-cloud-arrow-up" style="margin-right:5px"></i>Lưu</button></div>';
       h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">';
       [["🏅 HS năng lực đặc biệt","#F59E0B","#FFFBEB"],["💛 HS hoàn cảnh khó khăn","#EF4444","#FEF2F2"]].forEach(function(x){
         h+='<div class="card" style="padding:18px;border-top:3px solid '+x[1]+'"><h3 style="font-size:14px;font-weight:700;margin-bottom:12px">'+x[0]+'</h3><table class="dt"><thead><tr style="background:'+x[2]+'"><th>STT</th><th>Họ tên</th><th>Chi tiết</th></tr></thead><tbody>';
@@ -615,7 +618,7 @@ function renderCN(){
 
     // Tab: Plan (abbreviated)
     if(tab==="plan"){
-      h+='<h2 style="font-size:20px;font-weight:700;margin-bottom:16px">📅 Kế hoạch Chủ nhiệm</h2>';
+      h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><h2 style="font-size:20px;font-weight:700;margin:0">📅 Kế hoạch Chủ nhiệm</h2><button onclick="saveCNToGAS()" style="background:#059669;color:#fff;border:none;padding:8px 18px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans)"><i class="fa-solid fa-cloud-arrow-up" style="margin-right:5px"></i>Lưu lên Google Sheet</button></div>';
       var months=["Tháng 8-9: Ổn định tổ chức","Tháng 10: Thi đua 20/10","Tháng 11: Chào mừng 20/11","Tháng 12: Kiểm tra cuối HK1","Tháng 1: Tổng kết HK1","Tháng 2: Ổn định sau Tết","Tháng 3: Giữa kỳ II","Tháng 4: Ôn tập","Tháng 5: Tổng kết"];
       var mColors=["#1E3A8A","#1D4ED8","#2557D6","#1E40AF","#4338CA","#1E3A8A","#1D4ED8","#2557D6","#1E40AF"];
       months.forEach(function(m,mi){
@@ -627,7 +630,7 @@ function renderCN(){
 
     // Tab: Parents
     if(tab==="parents"){
-      h+='<h2 style="font-size:20px;font-weight:700;margin-bottom:16px">👨‍👩‍👧 Họp phụ huynh</h2>';
+      h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><h2 style="font-size:20px;font-weight:700;margin:0">👨‍👩‍👧 Họp phụ huynh</h2><button onclick="saveCNToGAS()" style="background:#059669;color:#fff;border:none;padding:8px 18px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans)"><i class="fa-solid fa-cloud-arrow-up" style="margin-right:5px"></i>Lưu</button></div>';
       [{l:1,t:"Họp đầu năm (Tháng 9)"},{l:2,t:"Sơ kết HK1 (Tháng 12-1)"},{l:3,t:"Tổng kết (Tháng 5)"}].forEach(function(hp){
         h+='<div class="card" style="margin-bottom:14px;overflow:hidden"><div style="background:'+gc.gr+';color:#fff;padding:12px 18px;font-weight:700;font-size:14px">📝 Lần '+hp.l+': '+hp.t+'</div><div style="padding:16px 18px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px"><div style="background:#f9fafb;border-radius:8px;padding:12px;border:1px solid #e8ecf0"><label style="font-size:10px;color:#888;font-weight:600;display:block;margin-bottom:4px">📅 Ngày họp</label><input type="date" style="width:100%;border:1px solid #ddd;border-radius:5px;padding:6px;font-size:13px;font-family:var(--sans);outline:none"></div><div style="background:#f9fafb;border-radius:8px;padding:12px;border:1px solid #e8ecf0"><label style="font-size:10px;color:#888;font-weight:600;display:block;margin-bottom:4px">👥 PH tham dự</label><input type="number" min="0" max="'+students.length+'" placeholder="0" style="width:60px;border:1px solid #ddd;border-radius:5px;padding:6px;font-size:13px;font-family:var(--sans);outline:none"> / '+students.length+'</div></div><textarea rows="2" placeholder="Ghi chú / Kết luận..." style="width:100%;border:1px solid #ddd;border-radius:5px;padding:8px;font-size:12px;font-family:var(--sans);outline:none;resize:vertical"></textarea></div></div>';
       });
@@ -635,7 +638,7 @@ function renderCN(){
 
     // Tab: Tracking
     if(tab==="tracking"){
-      h+='<h2 style="font-size:20px;font-weight:700;margin-bottom:16px">📌 Theo dõi HS cần quan tâm</h2>';
+      h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><h2 style="font-size:20px;font-weight:700;margin:0">📌 Theo dõi HS cần quan tâm</h2><button onclick="saveCNToGAS()" style="background:#059669;color:#fff;border:none;padding:8px 18px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans)"><i class="fa-solid fa-cloud-arrow-up" style="margin-right:5px"></i>Lưu</button></div>';
       ["Tháng 8-9","Tháng 10","Tháng 11","Tháng 12","Tháng 1","Tháng 2","Tháng 3","Tháng 4","Tháng 5"].forEach(function(m){
         h+='<div class="card" style="margin-bottom:12px;overflow:hidden"><div style="background:#f8fafc;padding:10px 16px;border-bottom:1px solid #e8ecf0;font-weight:700;font-size:13px">'+m+'</div><div style="padding:10px 14px"><table class="dt" style="border:1px solid #e8ecf0"><thead><tr style="background:#f9fafb"><th style="border:1px solid #e8ecf0;width:30px">STT</th><th style="border:1px solid #e8ecf0;min-width:110px">Họ tên ✏️</th><th style="border:1px solid #e8ecf0;min-width:120px">Biểu hiện ✏️</th><th style="border:1px solid #e8ecf0;min-width:140px">Biện pháp GD ✏️</th><th style="border:1px solid #e8ecf0;min-width:100px">Kết quả ✏️</th></tr></thead><tbody>';
         for(var i=1;i<=3;i++)h+='<tr><td style="border:1px solid #e8ecf0;text-align:center;color:#999">'+i+'</td><td style="border:1px solid #e8ecf0;padding:0"><input placeholder="Họ tên..." style="width:100%;border:none;padding:6px;font-size:11px;font-family:var(--sans);outline:none;background:transparent"></td><td style="border:1px solid #e8ecf0;padding:0"><input placeholder="Biểu hiện..." style="width:100%;border:none;padding:6px;font-size:11px;font-family:var(--sans);outline:none;background:transparent"></td><td style="border:1px solid #e8ecf0;padding:0"><input placeholder="Biện pháp..." style="width:100%;border:none;padding:6px;font-size:11px;font-family:var(--sans);outline:none;background:transparent"></td><td style="border:1px solid #e8ecf0;padding:0"><input placeholder="Kết quả..." style="width:100%;border:none;padding:6px;font-size:11px;font-family:var(--sans);outline:none;background:transparent"></td></tr>';
@@ -769,22 +772,35 @@ function doSearch(){
 
 // ===== THỐNG KÊ =====
 function renderTK(){
-  var allNam=STUDENTS_DATA.filter(function(s){return s.gioiTinh==="Nam"}).length;
   var h=appHeader("thongke");
-  h+='<div class="app-wrap"><div style="display:flex;align-items:center;gap:14px;margin-bottom:24px"><div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#1E3A8A,#2557D6);display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff"><i class="fa-solid fa-chart-bar"></i></div><div><div style="font-size:22px;font-weight:800">Thống kê toàn trường</div><div style="color:#888;font-size:12px">'+YEAR+' · '+totalSt+' HS · '+ALL_CLASSES.length+' lớp</div></div></div>';
-  h+='<div class="card" style="padding:22px;margin-bottom:18px"><div style="overflow-x:auto"><table class="dt"><thead><tr style="background:#E8F4FD">';
-  ["Lớp","GVCN","Sĩ số","Nam","Nữ"].forEach(function(t){h+='<th style="color:#0A3D62">'+t+'</th>'});
-  h+='</tr></thead><tbody>';
-  ALL_CLASSES.forEach(function(k){var st=ALL[k]||[];var n=st.filter(function(s){return s.gioiTinh==="Nam"}).length;var gc2=GC[parseInt(k[0])];h+='<tr><td><span class="tag" style="background:'+gc2.lt+';color:'+gc2.bg+';font-weight:700">'+k+'</span></td><td style="font-size:11px">'+esc(TCH[k])+'</td><td style="font-weight:700">'+st.length+'</td><td style="color:#2563EB">'+n+'</td><td style="color:#DC2626">'+(st.length-n)+'</td></tr>'});
-  h+='<tr style="background:#f5f7fa;font-weight:700"><td colspan="2">TỔNG</td><td style="font-weight:800;color:#0A3D62;font-size:15px">'+totalSt+'</td><td style="color:#2563EB">'+allNam+'</td><td style="color:#DC2626">'+(totalSt-allNam)+'</td></tr></tbody></table></div></div>';
-  h+='<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px">';
+  h+='<div class="app-wrap">';
+
+  // Stats cards at TOP
+  h+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px">';
+  [["Tổng học sinh",totalSt,"👨‍🎓","#1E3A8A"],["Tổng lớp",ALL_CLASSES.length,"🏫","#1D4ED8"],["GVCN",Object.keys(TCH).length,"👩‍🏫","#2557D6"],["Khối",5,"📚","#1E40AF"]].forEach(function(x){
+    h+='<div class="stat-card"><div class="stat-icon" style="background:'+x[3]+'12">'+x[2]+'</div><div><div style="font-size:24px;font-weight:800;color:'+x[3]+'">'+x[1]+'</div><div style="font-size:12px;color:#888">'+x[0]+'</div></div></div>';
+  });
+  h+='</div>';
+
+  // Khối summary cards
+  h+='<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px">';
   [1,2,3,4,5].forEach(function(g){var gt=gradeCount(g);var gc2=GC[g];var gN=gradeClasses(g).reduce(function(s,c){return s+(ALL[c]||[]).filter(function(st){return st.gioiTinh==="Nam"}).length},0);h+='<div class="card" style="padding:16px;border-top:4px solid '+gc2.bg+';text-align:center"><div style="font-size:22px;margin-bottom:4px">'+GI[g]+'</div><div style="font-size:13px;font-weight:700;color:'+gc2.bg+'">Khối '+g+'</div><div style="font-size:22px;font-weight:800;color:'+gc2.bg+'">'+gt+'</div><div style="font-size:10px;color:#888">Nam:'+gN+' Nữ:'+(gt-gN)+'</div></div>'});
-  h+='</div></div>';
+  h+='</div>';
+
+  // Title
+  h+='<div style="display:flex;align-items:center;gap:14px;margin-bottom:20px"><div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#1E3A8A,#2557D6);display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff"><i class="fa-solid fa-chart-bar"></i></div><div><div style="font-size:22px;font-weight:800">Thống kê toàn trường</div><div style="color:#888;font-size:12px">'+YEAR+' · '+totalSt+' HS · '+ALL_CLASSES.length+' lớp</div></div></div>';
+
+  // Detail table
+  h+='<div class="card" style="padding:20px;margin-bottom:20px"><div style="max-height:500px;overflow:auto"><table class="dt"><thead><tr style="background:#1E3A8A;color:#fff;position:sticky;top:0"><th style="border:1px solid rgba(255,255,255,.2)">Lớp</th><th style="border:1px solid rgba(255,255,255,.2)">GVCN</th><th style="border:1px solid rgba(255,255,255,.2)">Sĩ số</th><th style="border:1px solid rgba(255,255,255,.2)">Nam</th><th style="border:1px solid rgba(255,255,255,.2)">Nữ</th></tr></thead><tbody>';
+  ALL_CLASSES.forEach(function(k){var st=ALL[k]||[];var n=st.filter(function(s){return s.gioiTinh==="Nam"}).length;var gc2=GC[parseInt(k[0])];h+='<tr><td><span class="tag" style="background:'+gc2.lt+';color:'+gc2.bg+';font-weight:700">'+k+'</span></td><td style="font-size:11px">'+esc(TCH[k])+'</td><td style="font-weight:700">'+st.length+'</td><td style="color:#2563EB">'+n+'</td><td style="color:#DC2626">'+(st.length-n)+'</td></tr>'});
+  h+='<tr style="background:#f5f7fa;font-weight:700"><td colspan="2">TỔNG</td><td style="font-weight:800;color:#1E3A8A;font-size:15px">'+totalSt+'</td><td style="color:#2563EB">'+allNam+'</td><td style="color:#DC2626">'+(totalSt-allNam)+'</td></tr></tbody></table></div></div>';
+
+  h+='</div>';
   document.getElementById("tk-app").innerHTML=h;
 }
 
 // ===== ADMIN MODULE =====
-var adminTab = "upload";
+var adminTab = "config";
 
 function reloadAppData() {
   ALL = {}; TCH = {};
@@ -803,12 +819,48 @@ function renderAdmin() {
 
   // Tab buttons
   h += '<div style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap">';
-  var tabs = [["upload", "📤 Tải lên dữ liệu"], ["teachers", "👩‍🏫 Quản lý GVCN"], ["template", "📥 Tải file mẫu"], ["permissions", "🔐 Phân quyền"]];
+  var tabs = [["config", "🏫 Thông tin trường"], ["upload", "📤 Tải lên dữ liệu"], ["teachers", "👩‍🏫 Quản lý GVCN"], ["template", "📥 Tải file mẫu"], ["permissions", "🔐 Phân quyền"]];
   tabs.forEach(function(t) {
     var isOn = adminTab === t[0];
     h += '<button class="sidebar-btn" onclick="adminTab=\'' + t[0] + '\';renderAdmin()" style="padding:10px 18px;border-radius:10px;font-size:13px;font-weight:600;' + (isOn ? 'background:#2557D6;color:#fff;border:none' : 'background:#DBEAFE;color:#1E3A8A;border:1px solid #BFDBFE') + '">' + t[1] + '</button>';
   });
   h += '</div>';
+
+  // ===== TAB: CONFIG =====
+  if (adminTab === "config") {
+    h += '<div class="card" style="padding:28px;margin-bottom:20px">';
+    h += '<h3 style="font-size:16px;font-weight:700;margin-bottom:6px"><i class="fa-solid fa-school" style="color:#2557D6;margin-right:8px"></i>Khai báo thông tin trường</h3>';
+    h += '<p style="color:#888;font-size:13px;margin-bottom:20px">Cấu hình thông tin cơ bản. Dữ liệu này được sử dụng trên toàn bộ hệ thống.</p>';
+    h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">';
+    var cfgFields = [
+      ["cfg-school","Tên trường",SCHOOL,"fa-school"],
+      ["cfg-addr","Địa chỉ",ADDR,"fa-location-dot"],
+      ["cfg-principal","Hiệu trưởng","Trịnh Thị Thuý","fa-user-tie"],
+      ["cfg-year","Năm học",YEAR,"fa-calendar"],
+      ["cfg-phone","Điện thoại","","fa-phone"],
+      ["cfg-email","Email","","fa-envelope"]
+    ];
+    cfgFields.forEach(function(f) {
+      h += '<div><label style="font-size:12px;font-weight:600;color:#1E3A8A;display:flex;align-items:center;gap:6px;margin-bottom:6px"><i class="fa-solid '+f[3]+'" style="color:#3B82F6"></i>'+f[1]+'</label>';
+      h += '<input id="'+f[0]+'" value="'+esc(f[2])+'" placeholder="Nhập '+f[1].toLowerCase()+'..." style="width:100%;border:2px solid #E2E8F0;border-radius:10px;padding:11px 14px;font-size:13px;font-family:var(--sans);outline:none;transition:border .2s"></div>';
+    });
+    h += '</div>';
+    h += '<div style="margin-top:20px;display:flex;gap:10px"><button onclick="saveSchoolConfig()" style="background:#2557D6;color:#fff;border:none;padding:12px 28px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--sans)"><i class="fa-solid fa-save" style="margin-right:6px"></i>Lưu thông tin</button>';
+    h += '<button onclick="saveConfigToGAS()" style="background:#059669;color:#fff;border:none;padding:12px 28px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--sans)"><i class="fa-solid fa-cloud-arrow-up" style="margin-right:6px"></i>Đồng bộ lên GAS</button></div>';
+    h += '</div>';
+
+    // Mô tả hệ thống
+    h += '<div class="card" style="padding:20px">';
+    h += '<h4 style="font-size:14px;font-weight:700;margin-bottom:12px"><i class="fa-solid fa-circle-info" style="color:#3B82F6;margin-right:6px"></i>Hướng dẫn triển khai cho đơn vị khác</h4>';
+    h += '<div style="font-size:12px;color:#666;line-height:1.8">';
+    h += '1. Vào tab <b>🏫 Thông tin trường</b> → Nhập tên trường, địa chỉ, hiệu trưởng, năm học → Bấm <b>Lưu</b><br>';
+    h += '2. Vào tab <b>📤 Tải lên dữ liệu</b> → Upload file danh sách HS theo mẫu<br>';
+    h += '3. Vào tab <b>👩‍🏫 Quản lý GVCN</b> → Nhập hoặc upload danh sách GVCN<br>';
+    h += '4. Hệ thống tự động cập nhật: Trang chủ, Sổ chủ nhiệm, Tra cứu, Thống kê<br>';
+    h += '5. Mỗi GV đăng nhập bằng MK: [Tên lớp]gvcn (VD: 1Agvcn)<br>';
+    h += '6. <b>Lưu ý:</b> Thay đổi file Code.gs trên Google Sheet nếu muốn đồng bộ đám mây.</div>';
+    h += '</div>';
+  }
 
   // ===== TAB: UPLOAD =====
   if (adminTab === "upload") {
@@ -867,8 +919,10 @@ function renderAdmin() {
       var cls = allClasses.filter(function(c) { return c[0] === String(g); });
       cls.forEach(function(c) {
         var cv = TCH[c] || "";
-        h += '<div style="margin-bottom:8px"><label style="font-size:11px;color:#888;font-weight:600;display:block;margin-bottom:3px">Lớp ' + c + '</label>';
-        h += '<input id="gv-' + c + '" value="' + esc(cv) + '" placeholder="Nhập tên GVCN..." style="width:100%;border:1px solid #E2E8F0;border-radius:8px;padding:8px 10px;font-size:12px;font-family:var(--sans);outline:none;transition:border .2s"></div>';
+        var cpw = localStorage.getItem("qh_cpw_" + c) || (c + "gvcn");
+        h += '<div style="margin-bottom:10px;padding:8px;background:#f8fafc;border-radius:8px"><label style="font-size:11px;color:#1E3A8A;font-weight:700;display:block;margin-bottom:4px">Lớp ' + c + '</label>';
+        h += '<input id="gv-' + c + '" value="' + esc(cv) + '" placeholder="Tên GVCN..." style="width:100%;border:1px solid #E2E8F0;border-radius:8px;padding:7px 10px;font-size:12px;font-family:var(--sans);outline:none;margin-bottom:4px">';
+        h += '<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:#888;white-space:nowrap">🔑</span><div style="position:relative;flex:1"><input id="cpw-' + c + '" type="password" value="' + esc(cpw) + '" style="width:100%;border:1px solid #e2e8f0;border-radius:6px;padding:5px 28px 5px 8px;font-size:11px;font-family:var(--sans);outline:none"><span onclick="togglePwVis(this)" style="position:absolute;right:6px;top:5px;cursor:pointer;color:#aaa;font-size:12px"><i class="fa-solid fa-eye"></i></span></div></div></div>';
       });
       h += '</div>';
     }
@@ -915,26 +969,39 @@ function renderAdmin() {
   // ===== TAB: PERMISSIONS =====
   if (adminTab === "permissions") {
     h += '<div class="card" style="padding:28px;margin-bottom:20px">';
-    h += '<h3 style="font-size:16px;font-weight:700;margin-bottom:6px"><i class="fa-solid fa-shield-halved" style="color:#2557D6;margin-right:8px"></i>Phân quyền sử dụng</h3>';
-    h += '<p style="color:#888;font-size:13px;margin-bottom:20px">Thiết lập mật khẩu đăng nhập cho hệ thống. Giáo viên cần đăng nhập để truy cập Sổ chủ nhiệm và Quản trị.</p>';
+    h += '<h3 style="font-size:16px;font-weight:700;margin-bottom:6px"><i class="fa-solid fa-users-gear" style="color:#2557D6;margin-right:8px"></i>Danh sách CBGV & Phân quyền</h3>';
+    h += '<p style="color:#888;font-size:13px;margin-bottom:16px">Quản lý danh sách cán bộ, giáo viên, nhân viên. Mỗi GVCN đăng nhập bằng MK: [Tên lớp]gvcn</p>';
 
-    h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">';
+    // CBGV table
+    h += '<div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">';
+    h += '<button onclick="addCBGVRow()" style="background:#2557D6;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans)"><i class="fa-solid fa-plus"></i> Thêm CBGV</button>';
+    h += '<button onclick="document.getElementById(\'file-cbgv\').click()" style="background:#1E40AF;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans)"><i class="fa-solid fa-upload"></i> Tải file CBGV</button>';
+    h += '<input type="file" id="file-cbgv" accept=".xlsx,.xls" style="display:none" onchange="handleUploadCBGV(this)">';
+    h += '<button onclick="saveCBGVTable()" style="background:#059669;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans)"><i class="fa-solid fa-save"></i> Lưu danh sách</button></div>';
+    h += '<div style="max-height:400px;overflow:auto;border:1px solid #E2E8F0;border-radius:10px"><table class="dt" id="cbgv-table"><thead><tr style="background:#1E3A8A;color:#fff;position:sticky;top:0"><th style="width:40px">TT</th><th style="min-width:180px">Họ và tên CBGV</th><th style="width:100px">Ngày sinh</th><th style="min-width:120px">Chức vụ</th><th style="width:80px">GVCN lớp</th><th style="width:110px">Số ĐT</th><th style="width:50px"></th></tr></thead><tbody>';
+    if (typeof CBGV_LIST !== "undefined" && CBGV_LIST.length > 0) {
+      CBGV_LIST.forEach(function(cb, i) {
+        var name = cb.n.replace(/^\d+\.\s*/, "");
+        h += '<tr><td style="text-align:center">' + (i+1) + '</td>';
+        h += '<td><input class="cbgv-name" value="' + esc(name) + '" style="width:100%;border:none;border-bottom:1px solid #e2e8f0;padding:4px;font-size:12px;font-family:var(--sans);outline:none;background:transparent"></td>';
+        h += '<td><input class="cbgv-dob" value="" placeholder="dd/mm/yyyy" style="width:100%;border:none;border-bottom:1px solid #e2e8f0;padding:4px;font-size:11px;font-family:var(--sans);outline:none;background:transparent"></td>';
+        h += '<td><select class="cbgv-role" style="width:100%;border:none;border-bottom:1px solid #e2e8f0;padding:4px;font-size:11px;font-family:var(--sans);outline:none;background:transparent"><option>Giáo viên</option><option>Hiệu trưởng</option><option>Phó HT</option><option>Tổ trưởng CM</option><option>Tổ phó CM</option><option>Kế toán</option><option>GV TPT Đội</option><option>Nhân viên</option></select></td>';
+        h += '<td><input class="cbgv-class" value="" placeholder="1A" style="width:100%;border:none;border-bottom:1px solid #e2e8f0;padding:4px;font-size:12px;font-family:var(--sans);outline:none;background:transparent;text-align:center"></td>';
+        h += '<td><input class="cbgv-phone" value="" placeholder="0912..." style="width:100%;border:none;border-bottom:1px solid #e2e8f0;padding:4px;font-size:11px;font-family:var(--sans);outline:none;background:transparent"></td>';
+        h += '<td style="text-align:center"><button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;color:#DC2626;cursor:pointer;font-size:14px"><i class="fa-solid fa-trash-can"></i></button></td></tr>';
+      });
+    }
+    h += '</tbody></table></div></div>';
 
-    // Admin password
-    h += '<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:20px">';
+    // Password section - Admin only
+    h += '<div class="card" style="padding:20px">';
+    h += '<h4 style="font-size:14px;font-weight:700;margin-bottom:14px"><i class="fa-solid fa-key" style="color:#F59E0B;margin-right:6px"></i>Mật khẩu quản trị viên</h4>';
+
+    h += '<div style="max-width:400px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:20px;margin-bottom:16px">';
     h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><div style="width:40px;height:40px;border-radius:10px;background:#1E3A8A;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px"><i class="fa-solid fa-user-shield"></i></div><div><div style="font-size:14px;font-weight:700">Quản trị viên</div><div style="font-size:11px;color:#888">Truy cập đầy đủ hệ thống</div></div></div>';
     h += '<label style="font-size:11px;font-weight:600;color:#1E3A8A;display:block;margin-bottom:4px">Mật khẩu quản trị</label>';
-    h += '<input id="pw-admin" type="password" value="'+(localStorage.getItem("qh_pw_admin")||"admin2025")+'" style="width:100%;border:1px solid #BFDBFE;border-radius:8px;padding:10px;font-size:13px;font-family:var(--sans);outline:none;margin-bottom:10px">';
+    h += '<div style="position:relative"><input id="pw-admin" type="password" value="'+(localStorage.getItem("qh_pw_admin")||"admin2025")+'" style="width:100%;border:1px solid #BFDBFE;border-radius:8px;padding:10px 40px 10px 10px;font-size:13px;font-family:var(--sans);outline:none;margin-bottom:10px"><span onclick="togglePwVis(this)" style="position:absolute;right:10px;top:10px;cursor:pointer;color:#888;font-size:14px"><i class="fa-solid fa-eye"></i></span></div>';
     h += '<button onclick="savePW(\'admin\')" style="background:#1E3A8A;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans);width:100%"><i class="fa-solid fa-save" style="margin-right:4px"></i>Lưu mật khẩu</button>';
-    h += '</div>';
-
-    // Teacher password
-    h += '<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:20px">';
-    h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><div style="width:40px;height:40px;border-radius:10px;background:#2557D6;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px"><i class="fa-solid fa-chalkboard-user"></i></div><div><div style="font-size:14px;font-weight:700">Giáo viên</div><div style="font-size:11px;color:#888">Truy cập Sổ chủ nhiệm</div></div></div>';
-    h += '<label style="font-size:11px;font-weight:600;color:#1E3A8A;display:block;margin-bottom:4px">Mật khẩu giáo viên</label>';
-    h += '<input id="pw-teacher" type="password" value="'+(localStorage.getItem("qh_pw_teacher")||"gvcn2025")+'" style="width:100%;border:1px solid #BFDBFE;border-radius:8px;padding:10px;font-size:13px;font-family:var(--sans);outline:none;margin-bottom:10px">';
-    h += '<button onclick="savePW(\'teacher\')" style="background:#2557D6;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans);width:100%"><i class="fa-solid fa-save" style="margin-right:4px"></i>Lưu mật khẩu</button>';
-    h += '</div>';
     h += '</div>';
 
     // Current status
@@ -1110,14 +1177,18 @@ function saveTeachersFromForm() {
   var count = 0;
   classes.forEach(function(c) {
     var el = document.getElementById("gv-" + c);
+    var pwEl = document.getElementById("cpw-" + c);
     if (el) {
       var name = el.value.trim();
       if (name) { TEACHERS_DATA[c] = name; count++; }
       else { delete TEACHERS_DATA[c]; }
     }
+    if (pwEl && pwEl.value.trim()) {
+      localStorage.setItem("qh_cpw_" + c, pwEl.value.trim());
+    }
   });
   reloadAppData();
-  showUploadResult("success", "Đã lưu <b>" + count + " GVCN</b>!");
+  showUploadResult("success", "Đã lưu <b>" + count + " GVCN</b> và mật khẩu!");
   setTimeout(function() { renderAdmin(); }, 600);
 }
 
@@ -1185,6 +1256,100 @@ function testGAS() {
 
 
 
+
+function saveCNToGAS() {
+  if (!GAS_URL) { showUploadResult("error","Chưa kết nối GAS!"); return; }
+  var ck = cnState.selG + cnState.selC;
+  var mainArea = document.querySelector(".main-area");
+  if (!mainArea) return;
+  // Collect all textareas and inputs
+  var formData = {};
+  mainArea.querySelectorAll("textarea, input").forEach(function(el) {
+    var id = el.id || el.placeholder || "";
+    if (id) formData[id] = el.value;
+  });
+  fetch(GAS_URL, {method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({type:"cn_data",class:ck,tab:cnState.tab,data:formData})})
+    .then(function(r){return r.json()})
+    .then(function(d){showUploadResult("success","Đã lưu dữ liệu lớp "+ck+" lên Google Sheet!")})
+    .catch(function(e){showUploadResult("error","Lỗi lưu: "+e.message)});
+}
+
+function addCBGVRow() {
+  var tbody = document.querySelector("#cbgv-table tbody");
+  if (!tbody) return;
+  var n = tbody.rows.length + 1;
+  var tr = document.createElement("tr");
+  tr.innerHTML = '<td style="text-align:center">'+n+'</td><td><input class="cbgv-name" value="" placeholder="Họ và tên..." style="width:100%;border:none;border-bottom:1px solid #e2e8f0;padding:4px;font-size:12px;font-family:var(--sans);outline:none;background:transparent"></td><td><input class="cbgv-dob" placeholder="dd/mm/yyyy" style="width:100%;border:none;border-bottom:1px solid #e2e8f0;padding:4px;font-size:11px;font-family:var(--sans);outline:none;background:transparent"></td><td><select class="cbgv-role" style="width:100%;border:none;border-bottom:1px solid #e2e8f0;padding:4px;font-size:11px;font-family:var(--sans);outline:none;background:transparent"><option>Giáo viên</option><option>Hiệu trưởng</option><option>Phó HT</option><option>Tổ trưởng CM</option><option>Tổ phó CM</option><option>Kế toán</option><option>GV TPT Đội</option><option>Nhân viên</option></select></td><td><input class="cbgv-class" value="" placeholder="1A" style="width:100%;border:none;border-bottom:1px solid #e2e8f0;padding:4px;font-size:12px;font-family:var(--sans);outline:none;background:transparent;text-align:center"></td><td><input class="cbgv-phone" placeholder="0912..." style="width:100%;border:none;border-bottom:1px solid #e2e8f0;padding:4px;font-size:11px;font-family:var(--sans);outline:none;background:transparent"></td><td style="text-align:center"><button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;color:#DC2626;cursor:pointer;font-size:14px"><i class="fa-solid fa-trash-can"></i></button></td>';
+  tbody.appendChild(tr);
+  tr.querySelector("input").focus();
+}
+
+function saveCBGVTable() {
+  var rows = document.querySelectorAll("#cbgv-table tbody tr");
+  var data = [];
+  rows.forEach(function(tr) {
+    var name = tr.querySelector(".cbgv-name");
+    var cls = tr.querySelector(".cbgv-class");
+    if (name && name.value.trim()) {
+      data.push({name:name.value.trim(), cls:(cls?cls.value.trim():"")});
+      if (cls && cls.value.trim()) TEACHERS_DATA[cls.value.trim()] = name.value.trim();
+    }
+  });
+  reloadAppData();
+  showUploadResult("success","Đã lưu danh sách "+data.length+" CBGV!");
+}
+
+
+function togglePwVis(el) {
+  var input = el.parentElement.querySelector("input[type=password],input[data-pw]");
+  if (!input) input = el.previousElementSibling;
+  if (!input) return;
+  if (input.type === "password") {
+    input.type = "text"; input.dataset.pw = "1";
+    el.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+  } else {
+    input.type = "password"; delete input.dataset.pw;
+    el.innerHTML = '<i class="fa-solid fa-eye"></i>';
+  }
+}
+
+function changeClassPW(classKey) {
+  var newPW = prompt("Đổi mật khẩu lớp " + classKey + "\nMật khẩu hiện tại: " + (localStorage.getItem("qh_cpw_" + classKey) || classKey + "gvcn") + "\n\nNhập mật khẩu mới:");
+  if (newPW && newPW.trim()) {
+    localStorage.setItem("qh_cpw_" + classKey, newPW.trim());
+    showUploadResult("success", "Đã đổi mật khẩu lớp " + classKey + "!");
+  }
+}
+
+function handleUploadCBGV(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var wb = XLSX.read(e.target.result, {type:"array"});
+      var ws = wb.Sheets[wb.SheetNames[0]];
+      var json = XLSX.utils.sheet_to_json(ws, {header:1});
+      var tbody = document.querySelector("#cbgv-table tbody");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+      var n = 0;
+      for (var i = 1; i < json.length; i++) {
+        var r = json[i];
+        if (!r || !r[0]) continue;
+        n++;
+        var tr = document.createElement("tr");
+        tr.innerHTML = '<td style="text-align:center">'+n+'</td><td><input class="cbgv-name" value="'+esc(String(r[0]||""))+'" style="width:100%;border:none;border-bottom:1px solid #e2e8f0;padding:4px;font-size:12px;font-family:var(--sans);outline:none;background:transparent"></td><td><input class="cbgv-dob" value="'+esc(String(r[1]||""))+'" style="width:100%;border:none;border-bottom:1px solid #e2e8f0;padding:4px;font-size:11px;font-family:var(--sans);outline:none;background:transparent"></td><td><select class="cbgv-role" style="width:100%;border:none;border-bottom:1px solid #e2e8f0;padding:4px;font-size:11px;font-family:var(--sans);outline:none;background:transparent"><option>Giáo viên</option><option>Hiệu trưởng</option><option>Phó HT</option><option>Tổ trưởng CM</option><option>Tổ phó CM</option><option>Kế toán</option><option>GV TPT Đội</option><option>Nhân viên</option></select></td><td><input class="cbgv-class" value="'+esc(String(r[3]||""))+'" style="width:100%;border:none;border-bottom:1px solid #e2e8f0;padding:4px;font-size:12px;font-family:var(--sans);outline:none;background:transparent;text-align:center"></td><td><input class="cbgv-phone" value="'+esc(String(r[4]||""))+'" style="width:100%;border:none;border-bottom:1px solid #e2e8f0;padding:4px;font-size:11px;font-family:var(--sans);outline:none;background:transparent"></td><td style="text-align:center"><button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;color:#DC2626;cursor:pointer;font-size:14px"><i class="fa-solid fa-trash-can"></i></button></td>';
+        tbody.appendChild(tr);
+        if (r[2]) { var sel = tr.querySelector("select"); if(sel){for(var j=0;j<sel.options.length;j++){if(sel.options[j].text===String(r[2]))sel.selectedIndex=j;}} }
+      }
+      showUploadResult("success","Đã tải "+n+" CBGV từ file!");
+    } catch(err) { showUploadResult("error","Lỗi: "+err.message); }
+  };
+  reader.readAsArrayBuffer(file);
+  input.value = "";
+}
+
 // ===== INLINE EDIT FUNCTIONS =====
 var editMode = false;
 function toggleEditMode() {
@@ -1228,6 +1393,29 @@ function toggleEditMode() {
     showUploadResult("success", "Đã lưu thay đổi!");
     reloadAppData();
   }
+}
+
+
+function saveSchoolConfig() {
+  var s = document.getElementById("cfg-school");
+  var a = document.getElementById("cfg-addr");
+  var y = document.getElementById("cfg-year");
+  if (s && s.value.trim()) SCHOOL = s.value.trim();
+  if (a && a.value.trim()) ADDR = a.value.trim();
+  if (y && y.value.trim()) YEAR = y.value.trim();
+  // Update all visible elements
+  document.querySelectorAll(".app-logo-name").forEach(function(el){el.textContent=SCHOOL});
+  document.querySelectorAll(".app-logo-addr").forEach(function(el){el.textContent=ADDR});
+  showUploadResult("success","Đã cập nhật thông tin trường!");
+}
+function saveConfigToGAS() {
+  if (!GAS_URL) { showUploadResult("error","Chưa có URL GAS!"); return; }
+  showUploadResult("success","Đang đồng bộ...");
+  // POST config to GAS
+  fetch(GAS_URL, {method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({type:"config",school:SCHOOL,addr:ADDR,year:YEAR})})
+    .then(function(r){return r.json()})
+    .then(function(d){showUploadResult("success","Đã đồng bộ cấu hình lên Google Sheet!")})
+    .catch(function(e){showUploadResult("error","Lỗi: "+e.message)});
 }
 
 // ===== EXPORT FUNCTIONS =====
@@ -1344,7 +1532,7 @@ document.addEventListener("click",function(e){
   }
 });
 </script>
-<footer><b>QH Digital School</b> — Trường TH Xã Quỳ Hợp · Năm học 2025-2026 · v5.0</footer>
+<footer><b>QH Digital School</b> — Trường TH Xã Quỳ Hợp · Năm học 2025-2026 · v5.0<br><span style="opacity:.6;font-size:10px">© 2026 — Thiết kế: Chung Trần — Zalo 0913 031 073</span></footer>
 
 <script>
 // Intersection Observer for scroll animations
