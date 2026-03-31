@@ -6,7 +6,7 @@
 <title>QH Digital School — Trường TH Xã Quỳ Hợp</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 :root{--pri:#2557D6;--pri-d:#1E3A8A;--pri-l:#3B82F6;--pri-xl:#DBEAFE;--pri-xxl:#EFF6FF;--vio:#60A5FA;--vio-l:#93C5FD;--vio-xl:#E0EDFF;--gold:#d97706;--gold-l:#fef3c7;--green:#059669;--green-l:#d1fae5;--orange:#ea580c;--cyan:#0891b2;--cyan-l:#cffafe;--rose:#dc2626;--rose-l:#fee2e2;--ink:#0F1D45;--text:#1e293b;--muted:#475569;--border-l:#e2e8f0;--bg:#F0F4FF;--card:#fff;--sans:'Inter',sans-serif}
@@ -111,7 +111,7 @@ table.dt tr:hover td{background:#fafbfc}
 .search-input:focus{border-color:#3B82F6}
 footer{padding:30px;background:var(--ink);color:rgba(255,255,255,.4);text-align:center;font-size:11px}
 
-@media(max-width:900px){.hero-inner{grid-template-columns:1fr;text-align:center}.hero-desc{margin:0 auto 28px}.hero-tiles{max-width:100%}.hero-cards{display:none}.grades-grid{grid-template-columns:repeat(3,1fr)}.stats-row{grid-template-columns:1fr 1fr}.page-flex{flex-direction:column}.sidebar{width:100%;border-right:none;border-bottom:1px solid #e8ecf0;padding:10px}.app-nav{gap:4px}}
+@media(max-width:900px){.hero-inner{grid-template-columns:1fr;text-align:center}.hero-desc{margin:0 auto 28px}.hero-tiles{max-width:100%}.hero-cards{display:none}.grades-grid{grid-template-columns:repeat(3,1fr)}.stats-row{grid-template-columns:1fr 1fr}.page-flex{flex-direction:column}.sidebar{width:100%;border-right:none;border-bottom:1px solid #e8ecf0;padding:10px}.app-nav{gap:4px}#hs-grid{grid-template-columns:1fr!important}}
 @media(max-width:600px){.grades-grid{grid-template-columns:1fr 1fr}.stats-row{grid-template-columns:1fr}.hero-title{font-size:30px!important}}
 
 /* ANIMATIONS */
@@ -529,7 +529,7 @@ function renderCN(){
       ["STT","Họ và tên","Ngày sinh","GT","Dân tộc","Địa chỉ","SĐT","Cha","Mẹ"].forEach(function(th){h+='<th style="color:'+gc.bg+'">'+th+'</th>'});
       h+='</tr></thead><tbody>';
       students.forEach(function(s,i){
-        h+='<tr><td style="text-align:center;color:#999">'+(i+1)+'</td><td style="font-weight:600;white-space:nowrap">'+esc(s.hoTen)+'</td><td style="white-space:nowrap">'+esc(s.ngaySinh)+'</td><td><span class="tag" style="background:'+(s.gioiTinh==="Nữ"?"#FEE2E2":"#DBEAFE")+';color:'+(s.gioiTinh==="Nữ"?"#DC2626":"#2563EB")+'">'+s.gioiTinh+'</span></td><td>'+esc(s.danToc)+'</td><td style="font-size:11px;max-width:110px;overflow:hidden;text-overflow:ellipsis">'+esc(s.diaChi)+'</td><td style="font-size:11px;white-space:nowrap">'+esc(s.sdt)+'</td><td style="font-size:11px">'+esc(s.cha)+'</td><td style="font-size:11px">'+esc(s.me)+'</td></tr>';
+        h+='<tr data-idx="'+i+'"><td style="text-align:center;color:#999">'+(i+1)+'</td><td data-field="hoTen" style="font-weight:600;white-space:nowrap">'+esc(s.hoTen)+'</td><td data-field="ngaySinh" style="white-space:nowrap">'+esc(s.ngaySinh)+'</td><td><span class="tag" style="background:'+(s.gioiTinh==="Nữ"?"#FEE2E2":"#DBEAFE")+';color:'+(s.gioiTinh==="Nữ"?"#DC2626":"#2563EB")+'">'+s.gioiTinh+'</span></td><td data-field="danToc">'+esc(s.danToc)+'</td><td data-field="diaChi" style="font-size:11px;max-width:110px;overflow:hidden;text-overflow:ellipsis">'+esc(s.diaChi)+'</td><td data-field="sdt" style="font-size:11px;white-space:nowrap">'+esc(s.sdt)+'</td><td data-field="cha" style="font-size:11px">'+esc(s.cha)+'</td><td data-field="me" style="font-size:11px">'+esc(s.me)+'</td></tr>';
       });
       h+='</tbody></table></div></div>';
     }
@@ -673,10 +673,12 @@ function renderHS(){
   var h=appHeader("hoso");
   h+='<div class="app-wrap"><div style="display:flex;align-items:center;gap:14px;margin-bottom:20px"><div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#1E3A8A,#2557D6);display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff"><i class="fa-solid fa-building-columns"></i></div><div><div style="font-size:22px;font-weight:800">Hồ sơ số nhà trường</div><div style="color:#888;font-size:12px">'+SCHOOL+' · Năm học '+YEAR+' · 10 mảng</div></div></div>';
   h+='<div style="margin-bottom:20px;position:relative"><input type="text" id="hs-search" class="search-input" placeholder="🔍  Tìm kiếm hồ sơ, danh mục, giáo viên..." style="padding-left:18px;border-radius:14px;border:2px solid #e2e8f0;font-size:14px;padding:14px 18px;width:100%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.04)"><div style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:#2557D6;color:#fff;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer" onclick="filterHS()">Tìm kiếm</div></div>';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" id="hs-grid">';
   HOSO_CATS.forEach(function(cat,ci){
     var lc=cat.items.filter(function(it){return it.l}).length;
     var hasManySubs=cat.items.length>20;
-    h+='<div class="acc-card" id="acc-'+ci+'"><div class="acc-header" style="background:'+HOSO_COLORS[ci]+'" data-acc="'+ci+'"><div class="acc-h-icon"><i class="fa-solid '+HOSO_ICONS[ci]+'"></i></div><div class="acc-h-text"><div class="acc-h-title">'+esc(cat.n)+'</div><div class="acc-h-sub">'+cat.items.length+' danh mục · '+lc+' liên kết</div></div><div class="acc-arrow"><i class="fa-solid fa-chevron-down"></i></div></div><div class="acc-body">';
+    var spanFull=(ci>=8)?' style="grid-column:span 2"':'';
+    h+='<div'+spanFull+'><div class="acc-card" id="acc-'+ci+'"><div class="acc-header" style="background:'+HOSO_COLORS[ci]+';border-radius:14px" data-acc="'+ci+'"><div class="acc-h-icon"><i class="fa-solid '+HOSO_ICONS[ci]+'"></i></div><div class="acc-h-text"><div class="acc-h-title">'+esc(cat.n)+'</div><div class="acc-h-sub">'+cat.items.length+' danh mục · '+lc+' liên kết</div></div><div class="acc-arrow"><i class="fa-solid fa-chevron-down"></i></div></div><div class="acc-body">';
     if(hasManySubs){
       var groups=groupItems(cat.items);
       groups.forEach(function(grp,gi){
@@ -713,9 +715,9 @@ function renderHS(){
         else{h+='<div class="acc-item"><i class="fa-regular fa-file" style="color:#aaa;width:16px;text-align:center"></i> <span style="flex:1">'+esc(it.n)+'</span>';if(it.l)h+='<a href="'+it.l+'" target="_blank" class="acc-item-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Mở</a>';h+='</div>'}
       });
     }
-    h+='</div></div>';
+    h+='</div></div></div>';
   });
-  h+='</div>';
+  h+='</div></div>';
   document.getElementById("hs-app").innerHTML=h;
   var si=document.getElementById("hs-search");
   if(si){si.addEventListener("input",function(){filterHS()})}
@@ -1182,6 +1184,52 @@ function testGAS() {
 }
 
 
+
+// ===== INLINE EDIT FUNCTIONS =====
+var editMode = false;
+function toggleEditMode() {
+  editMode = !editMode;
+  var btn = document.getElementById("btn-edit-mode");
+  if (btn) {
+    btn.innerHTML = editMode ? '<i class="fa-solid fa-save"></i> Lưu' : '<i class="fa-solid fa-pen-to-square"></i> Chỉnh sửa';
+    btn.style.background = editMode ? '#059669' : '#F59E0B';
+  }
+  if (editMode) {
+    // Make cells editable
+    document.querySelectorAll(".main-area table.dt td[data-field]").forEach(function(td) {
+      td.contentEditable = "true";
+      td.style.background = "#FFFBEB";
+      td.style.outline = "1px dashed #F59E0B";
+      td.style.cursor = "text";
+    });
+  } else {
+    // Save changes
+    var ck = cnState.selG + cnState.selC;
+    var students = ALL[ck] || [];
+    document.querySelectorAll(".main-area table.dt tr[data-idx]").forEach(function(tr) {
+      var idx = parseInt(tr.getAttribute("data-idx"));
+      if (idx >= 0 && idx < students.length) {
+        tr.querySelectorAll("td[data-field]").forEach(function(td) {
+          var field = td.getAttribute("data-field");
+          var val = td.textContent.trim();
+          students[idx][field] = val;
+          // Also update STUDENTS_DATA
+          var globalIdx = STUDENTS_DATA.findIndex(function(s) { return s.lop === ck && s.hoTen === students[idx].hoTen; });
+          if (globalIdx >= 0) STUDENTS_DATA[globalIdx][field] = val;
+        });
+      }
+    });
+    document.querySelectorAll(".main-area table.dt td[data-field]").forEach(function(td) {
+      td.contentEditable = "false";
+      td.style.background = "";
+      td.style.outline = "";
+      td.style.cursor = "";
+    });
+    showUploadResult("success", "Đã lưu thay đổi!");
+    reloadAppData();
+  }
+}
+
 // ===== EXPORT FUNCTIONS =====
 function exportPrint() {
   var mainArea = document.querySelector(".main-area");
@@ -1232,7 +1280,7 @@ document.addEventListener("click",function(e){
     if(cn){
       if(cn==="home"){cnState={view:"home",selG:null,selC:null,tab:"overview"};renderCN();window.scrollTo(0,0)}
       if(cn==="grade"){cnState.view="grade";cnState.selG=parseInt(el.getAttribute("data-g"));cnState.selC=null;cnState.tab="overview";renderCN();window.scrollTo(0,0)}
-      if(cn==="class"){cnState.view="class";cnState.selG=parseInt(el.getAttribute("data-g"));cnState.selC=el.getAttribute("data-c");cnState.tab="overview";renderCN();window.scrollTo(0,0)}
+      if(cn==="class"){requireClassLogin(parseInt(el.getAttribute("data-g")),el.getAttribute("data-c"))}
       if(cn==="tab"){cnState.tab=el.getAttribute("data-tab");renderCN()}
       return;
     }
