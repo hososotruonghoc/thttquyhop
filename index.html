@@ -282,7 +282,7 @@ const CBGV_LIST = [{"n": "1. Trịnh Thị Thuý", "l": "https://drive.google.co
 </script>
 <script>
 var SCHOOL="Trường TH Thị Trấn Quỳ Hợp",ADDR="Xã Quỳ Hợp, tỉnh Nghệ An",YEAR="2025 - 2026";
-var GAS_URL="https://script.google.com/macros/s/AKfycbyGhS4T9qdhwbzWXhA43lzQkZykb6tSqqEmWxuShJDjtTH3tMAq57wxH0ctlkLbfLLbMw/exec";
+var GAS_URL="https://script.google.com/macros/s/AKfycbwEPumU1SL8IZYAU1o1XrVMgv_ftHWG1hEmW6UEsamAZLtJGc1bp5fuoLF1WJkjWk3_Xg/exec";
 var GC={1:{bg:"#1E3A8A",lt:"#DBEAFE",ac:"#3B82F6",gr:"linear-gradient(135deg,#1E3A8A,#2557D6)"},2:{bg:"#1D4ED8",lt:"#E0EDFF",ac:"#60A5FA",gr:"linear-gradient(135deg,#1D4ED8,#3B82F6)"},3:{bg:"#2557D6",lt:"#EFF6FF",ac:"#93C5FD",gr:"linear-gradient(135deg,#2557D6,#60A5FA)"},4:{bg:"#1E40AF",lt:"#DBEAFE",ac:"#3B82F6",gr:"linear-gradient(135deg,#1E40AF,#2563EB)"},5:{bg:"#1A3590",lt:"#E0EDFF",ac:"#60A5FA",gr:"linear-gradient(135deg,#1A3590,#2557D6)"}};
 var GI={1:"🌱",2:"🌻",3:"🌟",4:"🚀",5:"🏆"};
 var HOSO_COLORS=["linear-gradient(135deg,#1E3A8A,#1E40AF)","linear-gradient(135deg,#1E40AF,#2557D6)","linear-gradient(135deg,#2557D6,#3B82F6)","linear-gradient(135deg,#1D4ED8,#2563EB)","linear-gradient(135deg,#1E3A8A,#2557D6)","linear-gradient(135deg,#1E40AF,#3B82F6)","linear-gradient(135deg,#2557D6,#60A5FA)","linear-gradient(135deg,#1D4ED8,#60A5FA)","linear-gradient(135deg,#0F2260,#1E3A8A)","linear-gradient(135deg,#0C1C50,#162E80)"];
@@ -292,6 +292,7 @@ STUDENTS_DATA.forEach(function(s){if(!ALL[s.lop])ALL[s.lop]=[];ALL[s.lop].push(s
 Object.keys(TEACHERS_DATA).forEach(function(k){TCH[k]=TEACHERS_DATA[k]});
 var ALL_CLASSES=Object.keys(ALL).sort();
 var totalSt=STUDENTS_DATA.length;
+var allNam=0;
 function gradeClasses(g){return ALL_CLASSES.filter(function(c){return c[0]===String(g)})}
 function gradeCount(g){return gradeClasses(g).reduce(function(s,c){return s+(ALL[c]||[]).length},0)}
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
@@ -801,6 +802,7 @@ function reloadAppData() {
   totalSt = STUDENTS_DATA.length;
   allNam = STUDENTS_DATA.filter(function(s) { return s.gioiTinh === "Nam"; }).length;
   if(typeof updateHomeStats==="function")updateHomeStats();
+  if(typeof cacheCurrentData==="function")cacheCurrentData();
 }
 
 function renderAdmin() {
@@ -1127,6 +1129,7 @@ function handleUploadHS(input) {
       newStudents.forEach(function(s) { STUDENTS_DATA.push(s); });
       reloadAppData();
 
+      cacheCurrentData();
       showUploadResult("success", "Đã tải lên <b>" + newStudents.length + " HS</b> từ <b>" + ALL_CLASSES.length + " lớp</b>!");
       // Đồng bộ lên GAS
       if (GAS_URL) {
@@ -1708,38 +1711,74 @@ var ADMIN_PW = "admin2025";
 var GAS_CBGVNV = [];
 var GAS_CN_DATA = {};
 
+
+function cacheCurrentData() {
+  try {
+    var data = {
+      success: true,
+      students: STUDENTS_DATA,
+      teachers: TEACHERS_DATA,
+      classPW: CLASS_PW,
+      config: {"Tên trường": SCHOOL, "Địa chỉ": ADDR, "Năm học": YEAR, "Mật khẩu Admin": ADMIN_PW},
+      cbgvnv: GAS_CBGVNV,
+      soChuNhiem: GAS_CN_DATA,
+      totalStudents: STUDENTS_DATA.length,
+      totalClasses: ALL_CLASSES.length
+    };
+    sessionStorage.setItem("qh_cache", JSON.stringify(data));
+  } catch(e) {}
+}
+
+function applyGASData(data) {
+  if (!data || !data.success) return;
+  if (data.students && data.students.length > 0) {
+    STUDENTS_DATA.length = 0;
+    data.students.forEach(function(s) { STUDENTS_DATA.push(s); });
+  }
+  Object.keys(data.teachers || {}).forEach(function(k) { TEACHERS_DATA[k] = data.teachers[k]; });
+  if (data.classPW) CLASS_PW = data.classPW;
+  if (data.config && data.config["Mật khẩu Admin"]) ADMIN_PW = data.config["Mật khẩu Admin"];
+  if (data.config) {
+    if (data.config["Tên trường"]) SCHOOL = data.config["Tên trường"];
+    if (data.config["Địa chỉ"]) ADDR = data.config["Địa chỉ"];
+    if (data.config["Năm học"]) YEAR = data.config["Năm học"];
+  }
+  if (data.cbgvnv) GAS_CBGVNV = data.cbgvnv;
+  if (data.soChuNhiem) GAS_CN_DATA = data.soChuNhiem;
+  reloadAppData();
+  updateHomeStats();
+  // Cập nhật logo trên header
+  document.querySelectorAll(".app-logo-name").forEach(function(el) { el.textContent = SCHOOL; });
+  document.querySelectorAll(".app-logo-addr").forEach(function(el) { el.textContent = ADDR; });
+}
+
+function cacheData(data) {
+  try { sessionStorage.setItem("qh_cache", JSON.stringify(data)); } catch(e) {}
+}
+
+function loadCache() {
+  try {
+    var c = sessionStorage.getItem("qh_cache");
+    if (c) { var d = JSON.parse(c); applyGASData(d); console.log("📦 Đã tải dữ liệu từ cache"); return true; }
+  } catch(e) {}
+  return false;
+}
+
 (function(){
-  if(typeof GAS_URL!=="undefined" && GAS_URL){
-    fetch(GAS_URL+"?action=getData")
-      .then(function(r){return r.json()})
-      .then(function(data){
-        if(!data.success) return;
-        // Học sinh
-        if(data.students && data.students.length>0){
-          STUDENTS_DATA.length=0;
-          data.students.forEach(function(s){STUDENTS_DATA.push(s)});
+  // Bước 1: Tải cache trước (có ngay dữ liệu)
+  loadCache();
+  // Bước 2: Fetch từ GAS để cập nhật mới nhất
+  if (typeof GAS_URL !== "undefined" && GAS_URL) {
+    fetch(GAS_URL + "?action=getData")
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.success) {
+          applyGASData(data);
+          cacheData(data);
+          console.log("✅ Đã đồng bộ " + data.totalStudents + " HS, " + (data.totalClasses||0) + " lớp từ Google Sheet");
         }
-        // GVCN
-        Object.keys(data.teachers||{}).forEach(function(k){TEACHERS_DATA[k]=data.teachers[k]});
-        // Mật khẩu lớp (từ GAS, không dùng localStorage)
-        if(data.classPW) CLASS_PW = data.classPW;
-        // Mật khẩu admin
-        if(data.config && data.config["Mật khẩu Admin"]) ADMIN_PW = data.config["Mật khẩu Admin"];
-        // Cấu hình trường
-        if(data.config){
-          if(data.config["Tên trường"]) SCHOOL = data.config["Tên trường"];
-          if(data.config["Địa chỉ"]) ADDR = data.config["Địa chỉ"];
-          if(data.config["Năm học"]) YEAR = data.config["Năm học"];
-        }
-        // CBGVNV
-        if(data.cbgvnv) GAS_CBGVNV = data.cbgvnv;
-        // Sổ chủ nhiệm
-        if(data.soChuNhiem) GAS_CN_DATA = data.soChuNhiem;
-        reloadAppData();
-        updateHomeStats();
-        console.log("✅ Đã tải "+data.totalStudents+" HS, "+(data.totalClasses||0)+" lớp, "+(GAS_CBGVNV.length||0)+" CBGV từ Google Sheet");
       })
-      .catch(function(e){console.log("GAS load skipped:",e.message)});
+      .catch(function(e) { console.log("⚠️ GAS offline, dùng cache:", e.message); });
   }
 })();
 
